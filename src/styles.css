@@ -61,6 +61,18 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
+@theme inline {
+  --color-balm-cream: var(--balm-cream);
+  --color-balm-pink: var(--balm-pink);
+  --color-balm-pink-deep: var(--balm-pink-deep);
+  --color-balm-mint: var(--balm-mint);
+  --color-balm-peach: var(--balm-peach);
+  --color-balm-lavender: var(--balm-lavender);
+  --color-balm-butter: var(--balm-butter);
+  --font-display: "Fraunces", ui-serif, Georgia, serif;
+  --font-sans: "Nunito", ui-sans-serif, system-ui, sans-serif;
+}
+
 :root {
   --radius: 1rem;
   /* Cozy lip-balm palette: cream backgrounds, dusty pink primary, mint + peach accents */
