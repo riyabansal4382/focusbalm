@@ -9,10 +9,16 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ShelfRouteImport } from './routes/shelf'
 import { Route as GpaRouteImport } from './routes/gpa'
 import { Route as CalendarRouteImport } from './routes/calendar'
 import { Route as IndexRouteImport } from './routes/index'
 
+const ShelfRoute = ShelfRouteImport.update({
+  id: '/shelf',
+  path: '/shelf',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GpaRoute = GpaRouteImport.update({
   id: '/gpa',
   path: '/gpa',
@@ -33,34 +39,45 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/calendar': typeof CalendarRoute
   '/gpa': typeof GpaRoute
+  '/shelf': typeof ShelfRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/calendar': typeof CalendarRoute
   '/gpa': typeof GpaRoute
+  '/shelf': typeof ShelfRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/calendar': typeof CalendarRoute
   '/gpa': typeof GpaRoute
+  '/shelf': typeof ShelfRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/calendar' | '/gpa'
+  fullPaths: '/' | '/calendar' | '/gpa' | '/shelf'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/calendar' | '/gpa'
-  id: '__root__' | '/' | '/calendar' | '/gpa'
+  to: '/' | '/calendar' | '/gpa' | '/shelf'
+  id: '__root__' | '/' | '/calendar' | '/gpa' | '/shelf'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CalendarRoute: typeof CalendarRoute
   GpaRoute: typeof GpaRoute
+  ShelfRoute: typeof ShelfRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/shelf': {
+      id: '/shelf'
+      path: '/shelf'
+      fullPath: '/shelf'
+      preLoaderRoute: typeof ShelfRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/gpa': {
       id: '/gpa'
       path: '/gpa'
@@ -89,6 +106,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CalendarRoute: CalendarRoute,
   GpaRoute: GpaRoute,
+  ShelfRoute: ShelfRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
