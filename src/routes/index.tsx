@@ -159,11 +159,7 @@ function FocusPage() {
                 {DURATION_PRESETS.map((p) => (
                   <button
                     key={p.sec}
-                    onClick={() => {
-                      setDuration(p.sec);
-                      setElapsed(0);
-                      setRunning(false);
-                    }}
+                    onClick={() => setDurationMinutes(p.sec / 60)}
                     className={
                       "rounded-full border px-4 py-1.5 text-sm font-semibold transition " +
                       (duration === p.sec
@@ -174,6 +170,50 @@ function FocusPage() {
                     {p.label}
                   </button>
                 ))}
+              </div>
+
+              <div className="mt-4 rounded-2xl border border-border bg-background p-4">
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                    Custom length
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setDurationMinutes(Math.round(duration / 60) - 5)}
+                      className="h-8 w-8 rounded-full border border-border font-bold hover:border-primary/50"
+                      aria-label="Decrease by 5 minutes"
+                    >
+                      −
+                    </button>
+                    <input
+                      type="number"
+                      min={1}
+                      max={240}
+                      value={Math.round(duration / 60)}
+                      onChange={(e) => setDurationMinutes(Number(e.target.value))}
+                      className="w-20 rounded-xl border border-border bg-card px-3 py-1.5 text-center font-display text-lg tabular-nums outline-none focus:ring-2 focus:ring-primary/40"
+                      aria-label="Custom session length in minutes"
+                    />
+                    <button
+                      onClick={() => setDurationMinutes(Math.round(duration / 60) + 5)}
+                      className="h-8 w-8 rounded-full border border-border font-bold hover:border-primary/50"
+                      aria-label="Increase by 5 minutes"
+                    >
+                      +
+                    </button>
+                    <span className="text-sm text-muted-foreground">min</span>
+                  </div>
+                </div>
+                <input
+                  type="range"
+                  min={1}
+                  max={180}
+                  step={1}
+                  value={Math.round(duration / 60)}
+                  onChange={(e) => setDurationMinutes(Number(e.target.value))}
+                  className="mt-3 w-full accent-[var(--primary)]"
+                  aria-label="Session length slider"
+                />
               </div>
             </div>
           </div>
