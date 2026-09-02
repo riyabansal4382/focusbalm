@@ -54,10 +54,10 @@ export function useLocalState<T>(key: string, initial: T) {
 export const StorageKeys = KEYS;
 
 export const FLAVORS = [
-  { key: "pink", label: "Rose", color: "var(--balm-pink)" },
-  { key: "mint", label: "Mint", color: "var(--balm-mint)" },
+  { key: "pink", label: "Tangerine", color: "var(--balm-pink)" },
+  { key: "mint", label: "Apricot", color: "var(--balm-mint)" },
   { key: "peach", label: "Peach", color: "var(--balm-peach)" },
-  { key: "lavender", label: "Lavender", color: "var(--balm-lavender)" },
+  { key: "lavender", label: "Blood Orange", color: "var(--balm-lavender)" },
   { key: "butter", label: "Honey", color: "var(--balm-butter)" },
 ] as const;
 
