@@ -144,6 +144,49 @@ export function LipBalm({ fill, color = "var(--balm-pink)", size = 220, animated
           />
         </g>
 
+        {/* Droplets falling into the tube, landing on the rising surface */}
+        {open && (
+          <g clipPath={`url(#tubeClip-${uid})`}>
+            {[0, 1, 2, 3].map((i) => {
+              const startY = bodyTop + 6;
+              const dist = Math.max(12, fillY - startY - 6);
+              const cx = [96, 104, 100, 108][i];
+              return (
+                <ellipse
+                  key={i}
+                  cx={cx}
+                  cy={startY}
+                  rx={5 - i * 0.5}
+                  ry={7 - i * 0.5}
+                  fill={color}
+                  style={{
+                    ["--drop-dist" as string]: `${dist}px`,
+                    animation: `drop-fall ${0.85 + i * 0.12}s linear ${i * 0.28}s infinite`,
+                  }}
+                />
+              );
+            })}
+            {/* splash rings at the liquid surface */}
+            {[0, 1].map((i) => (
+              <ellipse
+                key={`s${i}`}
+                cx="100"
+                cy={fillY}
+                rx="16"
+                ry="4"
+                fill="none"
+                stroke={color}
+                strokeWidth="2.5"
+                style={{
+                  transformOrigin: `100px ${fillY}px`,
+                  animation: `splash-ring 1s ease-out ${i * 0.5}s infinite`,
+                  transition: "cy 700ms cubic-bezier(0.4, 0, 0.2, 1)",
+                }}
+              />
+            ))}
+          </g>
+        )}
+
         {/* Highlight on tube */}
         <rect x="56" y={bodyTop + 6} width="10" height={bodyHeight - 12} rx="5" fill="white" opacity="0.25" />
 
