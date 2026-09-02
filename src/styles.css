@@ -179,3 +179,13 @@
   from { transform: scaleY(0); }
   to { transform: scaleY(1); }
 }
+
+@keyframes beaker-tilt {
+  0%, 100% { transform: rotate(-3deg) translateY(0); }
+  50% { transform: rotate(3deg) translateY(-3px); }
+}
+
+@keyframes pour-stream {
+  0%, 100% { stroke-width: 8; opacity: 0.85; }
+  50% { stroke-width: 11; opacity: 1; }
+}
