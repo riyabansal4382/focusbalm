@@ -189,3 +189,15 @@
   0%, 100% { stroke-width: 8; opacity: 0.85; }
   50% { stroke-width: 11; opacity: 1; }
 }
+
+@keyframes drop-fall {
+  0% { transform: translateY(0); opacity: 0; }
+  10% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { transform: translateY(var(--drop-dist, 120px)) scaleY(0.5); opacity: 0; }
+}
+
+@keyframes splash-ring {
+  0% { transform: scale(0.3); opacity: 0.7; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
