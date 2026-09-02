@@ -35,8 +35,8 @@ export function LipBalm({ fill, color = "var(--balm-pink)", size = 220, animated
       >
         <defs>
           <linearGradient id={capId} x1="0" x2="0" y1="0" y2="1">
-            <stop offset="0" stopColor="var(--balm-cream)" />
-            <stop offset="1" stopColor="var(--muted)" />
+            <stop offset="0" stopColor="var(--balm-pink-deep)" />
+            <stop offset="1" stopColor="var(--primary)" />
           </linearGradient>
           <linearGradient id={balmId} x1="0" x2="0" y1="0" y2="1">
             <stop offset="0" stopColor={color} stopOpacity="0.95" />
@@ -56,7 +56,7 @@ export function LipBalm({ fill, color = "var(--balm-pink)", size = 220, animated
           }}
         >
           <rect x="42" y="10" width="116" height="80" rx="14" fill={`url(#${capId})`} stroke="var(--border)" strokeWidth="2" />
-          <rect x="52" y="22" width="96" height="10" rx="4" fill="var(--balm-cream)" opacity="0.7" />
+          <rect x="52" y="22" width="96" height="10" rx="4" fill="var(--balm-cream)" opacity="0.45" />
         </g>
 
         {/* Beaker pouring in — only while a session runs */}
