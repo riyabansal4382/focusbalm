@@ -64,6 +64,13 @@ function FocusPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [elapsed, duration]);
 
+  function setDurationMinutes(mins: number) {
+    const clamped = Math.max(1, Math.min(240, Math.round(mins || 1)));
+    setDuration(clamped * 60);
+    setElapsed(0);
+    setRunning(false);
+  }
+
   function start() {
     if (elapsed >= duration) setElapsed(0);
     startedAt.current = Date.now();
