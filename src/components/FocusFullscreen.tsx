@@ -31,6 +31,7 @@ export function FocusFullscreen({
 }) {
   const [playlist] = useLocalState<string>(SPOTIFY_KEY, PRESETS[0].url);
   const embed = useMemo(() => toSpotifyEmbed(playlist), [playlist]);
+  const { now } = useSpotifyAccount();
 
   useEffect(() => {
     if (!open) return;
