@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { useLocalState } from "@/lib/storage";
-import { Vinyl } from "@/components/Vinyl";
+import { Turntable } from "@/components/Turntable";
+import { beginSpotifyLogin, useSpotifyAccount } from "@/lib/spotifyAuth";
 
 export const SPOTIFY_KEY = "balm.spotify";
 
@@ -36,6 +37,8 @@ export function FocusPlayer({ running = false }: { running?: boolean }) {
   const [draft, setDraft] = useState("");
   const embed = useMemo(() => toSpotifyEmbed(saved), [saved]);
   const draftInvalid = draft.trim().length > 0 && !toSpotifyEmbed(draft);
+  const { token, profile, now, control, logout } = useSpotifyAccount();
+  const [authError, setAuthError] = useState<string | null>(null);
 
   return (
     <section className="mt-10 rounded-3xl border border-border bg-card p-6">
@@ -101,7 +104,13 @@ export function FocusPlayer({ running = false }: { running?: boolean }) {
       )}
 
       <div className="mt-6 flex flex-col items-center gap-6 md:flex-row md:items-center">
-        <Vinyl size={160} spinning={running} label={playlistLabel(saved)} />
+        <Turntable
+          size={220}
+          spinning={running || Boolean(now?.isPlaying)}
+          cover={now?.cover ?? null}
+          title={now?.title ?? playlistLabel(saved)}
+          subtitle={now?.artist ?? "record player"}
+        />
         <div className="flex-1 self-stretch overflow-hidden rounded-2xl border border-border">
         {embed ? (
           <iframe
@@ -121,8 +130,67 @@ export function FocusPlayer({ running = false }: { running?: boolean }) {
           )}
         </div>
       </div>
+
+      <div className="mt-6 rounded-2xl border border-border bg-background p-4">
+        {token ? (
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p className="text-sm font-semibold">
+                Connected as {profile?.name ?? "your Spotify account"}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {profile?.product === "premium"
+                  ? "Premium — controls below drive your active Spotify device."
+                  : "Free account — playback controls need Spotify Premium."}
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => control("previous")}
+                className="rounded-full border border-border px-3 py-2 text-sm font-semibold hover:border-foreground/40"
+              >
+                ⏮
+              </button>
+              <button
+                onClick={() => control(now?.isPlaying ? "pause" : "play")}
+                className="rounded-full bg-primary px-5 py-2 text-sm font-bold text-primary-foreground hover:brightness-110"
+              >
+                {now?.isPlaying ? "Pause" : "Play"}
+              </button>
+              <button
+                onClick={() => control("next")}
+                className="rounded-full border border-border px-3 py-2 text-sm font-semibold hover:border-foreground/40"
+              >
+                ⏭
+              </button>
+              <button
+                onClick={logout}
+                className="rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground hover:text-foreground"
+              >
+                Log out
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p className="text-sm text-muted-foreground">
+              Log in with Spotify to show the real album cover on the record and control playback.
+            </p>
+            <button
+              onClick={() =>
+                beginSpotifyLogin().catch((e: Error) => setAuthError(e.message))
+              }
+              className="rounded-full bg-foreground px-5 py-2 text-sm font-bold text-background hover:opacity-90"
+            >
+              Log in with Spotify
+            </button>
+          </div>
+        )}
+        {authError && <p className="mt-2 text-xs text-destructive">{authError}</p>}
+      </div>
+
       <p className="mt-3 text-xs text-muted-foreground">
-        Free Spotify accounts get 30-second previews; log in to Spotify in this browser for full tracks.
+        Free Spotify accounts get 30-second previews; Premium is required for in-app playback control.
       </p>
     </section>
   );
