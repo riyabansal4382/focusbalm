@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ShelfRouteImport } from './routes/shelf'
 import { Route as ProgressRouteImport } from './routes/progress'
+import { Route as OverviewRouteImport } from './routes/overview'
 import { Route as GpaRouteImport } from './routes/gpa'
 import { Route as CalendarRouteImport } from './routes/calendar'
 import { Route as IndexRouteImport } from './routes/index'
@@ -23,6 +24,11 @@ const ShelfRoute = ShelfRouteImport.update({
 const ProgressRoute = ProgressRouteImport.update({
   id: '/progress',
   path: '/progress',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OverviewRoute = OverviewRouteImport.update({
+  id: '/overview',
+  path: '/overview',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GpaRoute = GpaRouteImport.update({
@@ -45,6 +51,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/calendar': typeof CalendarRoute
   '/gpa': typeof GpaRoute
+  '/overview': typeof OverviewRoute
   '/progress': typeof ProgressRoute
   '/shelf': typeof ShelfRoute
 }
@@ -52,6 +59,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/calendar': typeof CalendarRoute
   '/gpa': typeof GpaRoute
+  '/overview': typeof OverviewRoute
   '/progress': typeof ProgressRoute
   '/shelf': typeof ShelfRoute
 }
@@ -60,21 +68,30 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/calendar': typeof CalendarRoute
   '/gpa': typeof GpaRoute
+  '/overview': typeof OverviewRoute
   '/progress': typeof ProgressRoute
   '/shelf': typeof ShelfRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/calendar' | '/gpa' | '/progress' | '/shelf'
+  fullPaths: '/' | '/calendar' | '/gpa' | '/overview' | '/progress' | '/shelf'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/calendar' | '/gpa' | '/progress' | '/shelf'
-  id: '__root__' | '/' | '/calendar' | '/gpa' | '/progress' | '/shelf'
+  to: '/' | '/calendar' | '/gpa' | '/overview' | '/progress' | '/shelf'
+  id:
+    | '__root__'
+    | '/'
+    | '/calendar'
+    | '/gpa'
+    | '/overview'
+    | '/progress'
+    | '/shelf'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CalendarRoute: typeof CalendarRoute
   GpaRoute: typeof GpaRoute
+  OverviewRoute: typeof OverviewRoute
   ProgressRoute: typeof ProgressRoute
   ShelfRoute: typeof ShelfRoute
 }
@@ -93,6 +110,13 @@ declare module '@tanstack/react-router' {
       path: '/progress'
       fullPath: '/progress'
       preLoaderRoute: typeof ProgressRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/overview': {
+      id: '/overview'
+      path: '/overview'
+      fullPath: '/overview'
+      preLoaderRoute: typeof OverviewRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/gpa': {
@@ -123,6 +147,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CalendarRoute: CalendarRoute,
   GpaRoute: GpaRoute,
+  OverviewRoute: OverviewRoute,
   ProgressRoute: ProgressRoute,
   ShelfRoute: ShelfRoute,
 }
