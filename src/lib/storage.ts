@@ -81,3 +81,11 @@ export function calcGPA(courses: Course[]): number {
   const totalPoints = valid.reduce((s, c) => s + c.credits * GRADE_POINTS[c.grade], 0);
   return totalPoints / totalCredits;
 }
+
+export type Task = {
+  id: string;
+  title: string;
+  done: boolean;
+  createdAt: string; // ISO date
+  completedAt?: string; // ISO date
+};
