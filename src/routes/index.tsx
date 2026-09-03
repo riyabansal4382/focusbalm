@@ -2,6 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { LipBalm } from "@/components/LipBalm";
+import { WeeklyProgressChart } from "@/components/WeeklyProgressChart";
+
 import {
   FLAVORS,
   StorageKeys,
@@ -292,7 +294,9 @@ function FocusPage() {
           Tiny wins add up. Each finished balm lives on your shelf.
         </p>
         <TodayStrip sessions={sessions} />
+        <WeeklyProgressChart sessions={sessions} />
       </section>
+
     </AppShell>
   );
 }
