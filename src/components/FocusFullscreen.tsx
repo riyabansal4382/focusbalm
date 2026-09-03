@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from "react";
 import { LipBalm } from "@/components/LipBalm";
-import { Vinyl } from "@/components/Vinyl";
+import { Turntable } from "@/components/Turntable";
 import {
   PRESETS,
   SPOTIFY_KEY,
@@ -8,6 +8,7 @@ import {
   toSpotifyEmbed,
 } from "@/components/FocusPlayer";
 import { useLocalState } from "@/lib/storage";
+import { useSpotifyAccount } from "@/lib/spotifyAuth";
 
 export function FocusFullscreen({
   open,
