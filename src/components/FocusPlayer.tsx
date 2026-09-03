@@ -1,12 +1,19 @@
 import { useMemo, useState } from "react";
 import { useLocalState } from "@/lib/storage";
+import { Vinyl } from "@/components/Vinyl";
 
-const PRESETS = [
+export const SPOTIFY_KEY = "balm.spotify";
+
+export const PRESETS = [
   { label: "Lo-fi beats", url: "https://open.spotify.com/playlist/37i9dQZF1DWWQRwui0ExPn" },
   { label: "Deep focus", url: "https://open.spotify.com/playlist/37i9dQZF1DWZeKCadgRdKQ" },
   { label: "Peaceful piano", url: "https://open.spotify.com/playlist/37i9dQZF1DX4sWSpwq3LiO" },
   { label: "Instrumental study", url: "https://open.spotify.com/playlist/37i9dQZF1DX9sIqqvKsjG8" },
 ] as const;
+
+export function playlistLabel(url: string): string {
+  return PRESETS.find((p) => p.url === url)?.label ?? "Your playlist";
+}
 
 /** Turn a Spotify share link or URI into an embed URL. Returns null if unrecognised. */
 export function toSpotifyEmbed(input: string): string | null {
@@ -21,9 +28,9 @@ export function toSpotifyEmbed(input: string): string | null {
   return null;
 }
 
-export function FocusPlayer() {
+export function FocusPlayer({ running = false }: { running?: boolean }) {
   const [saved, setSaved] = useLocalState<string>(
-    "balm.spotify",
+    SPOTIFY_KEY,
     PRESETS[0].url,
   );
   const [draft, setDraft] = useState("");
@@ -93,7 +100,9 @@ export function FocusPlayer() {
         </p>
       )}
 
-      <div className="mt-5 overflow-hidden rounded-2xl border border-border">
+      <div className="mt-6 flex flex-col items-center gap-6 md:flex-row md:items-center">
+        <Vinyl size={160} spinning={running} label={playlistLabel(saved)} />
+        <div className="flex-1 self-stretch overflow-hidden rounded-2xl border border-border">
         {embed ? (
           <iframe
             key={embed}
@@ -108,8 +117,9 @@ export function FocusPlayer() {
         ) : (
           <div className="px-4 py-10 text-center text-sm text-muted-foreground">
             Choose a playlist above to start the music.
-          </div>
-        )}
+            </div>
+          )}
+        </div>
       </div>
       <p className="mt-3 text-xs text-muted-foreground">
         Free Spotify accounts get 30-second previews; log in to Spotify in this browser for full tracks.
