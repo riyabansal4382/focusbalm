@@ -1,12 +1,18 @@
 import { useMemo, useState } from "react";
 import { useLocalState } from "@/lib/storage";
 
-const PRESETS = [
+export const SPOTIFY_KEY = "balm.spotify";
+
+export const PRESETS = [
   { label: "Lo-fi beats", url: "https://open.spotify.com/playlist/37i9dQZF1DWWQRwui0ExPn" },
   { label: "Deep focus", url: "https://open.spotify.com/playlist/37i9dQZF1DWZeKCadgRdKQ" },
   { label: "Peaceful piano", url: "https://open.spotify.com/playlist/37i9dQZF1DX4sWSpwq3LiO" },
   { label: "Instrumental study", url: "https://open.spotify.com/playlist/37i9dQZF1DX9sIqqvKsjG8" },
 ] as const;
+
+export function playlistLabel(url: string): string {
+  return PRESETS.find((p) => p.url === url)?.label ?? "Your playlist";
+}
 
 /** Turn a Spotify share link or URI into an embed URL. Returns null if unrecognised. */
 export function toSpotifyEmbed(input: string): string | null {
@@ -23,7 +29,7 @@ export function toSpotifyEmbed(input: string): string | null {
 
 export function FocusPlayer() {
   const [saved, setSaved] = useLocalState<string>(
-    "balm.spotify",
+    SPOTIFY_KEY,
     PRESETS[0].url,
   );
   const [draft, setDraft] = useState("");
