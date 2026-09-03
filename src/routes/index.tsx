@@ -292,7 +292,9 @@ function FocusPage() {
           Tiny wins add up. Each finished balm lives on your shelf.
         </p>
         <TodayStrip sessions={sessions} />
+        <WeeklyProgressChart sessions={sessions} />
       </section>
+
     </AppShell>
   );
 }
