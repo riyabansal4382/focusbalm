@@ -10,7 +10,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import type { BalmSession } from "@/lib/storage";
+import type { BalmSession, Task } from "@/lib/storage";
 
 function startOfDay(d: Date) {
   const c = new Date(d);
@@ -34,7 +34,13 @@ function linearRegression(values: number[]) {
   return { a: meanY - b * meanX, b };
 }
 
-export function WeeklyProgressChart({ sessions }: { sessions: BalmSession[] }) {
+export function WeeklyProgressChart({
+  sessions,
+  tasks = [],
+}: {
+  sessions: BalmSession[];
+  tasks?: Task[];
+}) {
   const data = useMemo(() => {
     const today = startOfDay(new Date());
     const days = Array.from({ length: 7 }, (_, i) => {
@@ -43,12 +49,18 @@ export function WeeklyProgressChart({ sessions }: { sessions: BalmSession[] }) {
       return d;
     });
 
-    const counts = days.map(
-      (d) =>
-        sessions.filter(
-          (s) => startOfDay(new Date(s.completedAt)).getTime() === d.getTime(),
-        ).length,
-    );
+    const counts = days.map((d) => {
+      const balms = sessions.filter(
+        (s) => startOfDay(new Date(s.completedAt)).getTime() === d.getTime(),
+      ).length;
+      const doneTasks = tasks.filter(
+        (t) =>
+          t.done &&
+          t.completedAt &&
+          startOfDay(new Date(t.completedAt)).getTime() === d.getTime(),
+      ).length;
+      return balms + doneTasks;
+    });
 
     const { a, b } = linearRegression(counts);
 
@@ -57,7 +69,7 @@ export function WeeklyProgressChart({ sessions }: { sessions: BalmSession[] }) {
       completed: counts[i],
       intended: Math.max(0, Number((a + b * i).toFixed(2))),
     }));
-  }, [sessions]);
+  }, [sessions, tasks]);
 
   const total = data.reduce((s, d) => s + d.completed, 0);
   const slope = data.length > 1 ? data[6].intended - data[0].intended : 0;
@@ -68,7 +80,7 @@ export function WeeklyProgressChart({ sessions }: { sessions: BalmSession[] }) {
         <div>
           <h3 className="font-display text-xl font-semibold">This week</h3>
           <p className="text-sm text-muted-foreground">
-            Balms finished each day, with a trend line for the pace you were aiming for.
+            Tasks and balms finished each day, with a trend line for the pace you were aiming for.
           </p>
         </div>
         <div className="text-right">
