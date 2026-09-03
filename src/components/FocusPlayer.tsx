@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { useLocalState } from "@/lib/storage";
+import { Vinyl } from "@/components/Vinyl";
 
 export const SPOTIFY_KEY = "balm.spotify";
 
@@ -27,7 +28,7 @@ export function toSpotifyEmbed(input: string): string | null {
   return null;
 }
 
-export function FocusPlayer() {
+export function FocusPlayer({ running = false }: { running?: boolean }) {
   const [saved, setSaved] = useLocalState<string>(
     SPOTIFY_KEY,
     PRESETS[0].url,
@@ -99,7 +100,9 @@ export function FocusPlayer() {
         </p>
       )}
 
-      <div className="mt-5 overflow-hidden rounded-2xl border border-border">
+      <div className="mt-6 flex flex-col items-center gap-6 md:flex-row md:items-center">
+        <Vinyl size={160} spinning={running} label={playlistLabel(saved)} />
+        <div className="flex-1 self-stretch overflow-hidden rounded-2xl border border-border">
         {embed ? (
           <iframe
             key={embed}
@@ -114,8 +117,9 @@ export function FocusPlayer() {
         ) : (
           <div className="px-4 py-10 text-center text-sm text-muted-foreground">
             Choose a playlist above to start the music.
-          </div>
-        )}
+            </div>
+          )}
+        </div>
       </div>
       <p className="mt-3 text-xs text-muted-foreground">
         Free Spotify accounts get 30-second previews; log in to Spotify in this browser for full tracks.

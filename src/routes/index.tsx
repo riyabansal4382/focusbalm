@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { LipBalm } from "@/components/LipBalm";
 import { FocusPlayer } from "@/components/FocusPlayer";
+import { FocusFullscreen } from "@/components/FocusFullscreen";
 
 import {
   FLAVORS,
@@ -35,6 +36,7 @@ function FocusPage() {
   const [duration, setDuration] = useState(25 * 60);
   const [elapsed, setElapsed] = useState(0);
   const [running, setRunning] = useState(false);
+  const [fullscreen, setFullscreen] = useState(false);
   const [celebrate, setCelebrate] = useState(false);
   const [sessions, setSessions] = useLocalState<BalmSession[]>(StorageKeys.sessions, []);
   const startedAt = useRef<number | null>(null);
@@ -270,6 +272,12 @@ function FocusPage() {
               Save to shelf
             </button>
             <button
+              onClick={() => setFullscreen(true)}
+              className="rounded-full border border-border bg-card px-6 py-3 font-semibold transition hover:border-foreground/40"
+            >
+              Full screen
+            </button>
+            <button
               onClick={reset}
               className="rounded-full px-4 py-3 text-sm font-semibold text-muted-foreground hover:text-foreground"
             >
@@ -296,7 +304,18 @@ function FocusPage() {
         <TodayStrip sessions={sessions} />
       </section>
 
-      <FocusPlayer />
+      <FocusPlayer running={running} />
+
+      <FocusFullscreen
+        open={fullscreen}
+        onClose={() => setFullscreen(false)}
+        fill={fill}
+        color={color}
+        label={subject}
+        time={formatTime(remaining)}
+        running={running}
+        onToggle={() => (running ? pause() : start())}
+      />
 
     </AppShell>
   );
