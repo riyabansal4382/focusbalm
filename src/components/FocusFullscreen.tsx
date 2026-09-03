@@ -71,11 +71,13 @@ export function FocusFullscreen({
         <div className="mt-6 flex flex-1 flex-col items-center justify-center gap-10 md:flex-row md:gap-16">
           <LipBalm fill={fill} color={color} size={300} animated={running} label={label} />
           <div className="flex flex-col items-center gap-8">
-            <Vinyl
-              size={220}
-              spinning={running}
+            <Turntable
+              size={260}
+              spinning={running || Boolean(now?.isPlaying)}
               color={color}
-              label={playlistLabel(playlist)}
+              cover={now?.cover ?? null}
+              title={now?.title ?? playlistLabel(playlist)}
+              subtitle={now?.artist ?? "record player"}
             />
             <div className="text-center">
               <div className="font-display text-7xl font-semibold tabular-nums tracking-tight">
