@@ -37,6 +37,8 @@ export function FocusPlayer({ running = false }: { running?: boolean }) {
   const [draft, setDraft] = useState("");
   const embed = useMemo(() => toSpotifyEmbed(saved), [saved]);
   const draftInvalid = draft.trim().length > 0 && !toSpotifyEmbed(draft);
+  const { token, profile, now, control, logout } = useSpotifyAccount();
+  const [authError, setAuthError] = useState<string | null>(null);
 
   return (
     <section className="mt-10 rounded-3xl border border-border bg-card p-6">
