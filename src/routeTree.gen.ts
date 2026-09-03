@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SpotifyCallbackRouteImport } from './routes/spotify-callback'
 import { Route as ShelfRouteImport } from './routes/shelf'
 import { Route as ProgressRouteImport } from './routes/progress'
 import { Route as OverviewRouteImport } from './routes/overview'
@@ -16,6 +17,11 @@ import { Route as GpaRouteImport } from './routes/gpa'
 import { Route as CalendarRouteImport } from './routes/calendar'
 import { Route as IndexRouteImport } from './routes/index'
 
+const SpotifyCallbackRoute = SpotifyCallbackRouteImport.update({
+  id: '/spotify-callback',
+  path: '/spotify-callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ShelfRoute = ShelfRouteImport.update({
   id: '/shelf',
   path: '/shelf',
@@ -54,6 +60,7 @@ export interface FileRoutesByFullPath {
   '/overview': typeof OverviewRoute
   '/progress': typeof ProgressRoute
   '/shelf': typeof ShelfRoute
+  '/spotify-callback': typeof SpotifyCallbackRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -62,6 +69,7 @@ export interface FileRoutesByTo {
   '/overview': typeof OverviewRoute
   '/progress': typeof ProgressRoute
   '/shelf': typeof ShelfRoute
+  '/spotify-callback': typeof SpotifyCallbackRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -71,12 +79,27 @@ export interface FileRoutesById {
   '/overview': typeof OverviewRoute
   '/progress': typeof ProgressRoute
   '/shelf': typeof ShelfRoute
+  '/spotify-callback': typeof SpotifyCallbackRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/calendar' | '/gpa' | '/overview' | '/progress' | '/shelf'
+  fullPaths:
+    | '/'
+    | '/calendar'
+    | '/gpa'
+    | '/overview'
+    | '/progress'
+    | '/shelf'
+    | '/spotify-callback'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/calendar' | '/gpa' | '/overview' | '/progress' | '/shelf'
+  to:
+    | '/'
+    | '/calendar'
+    | '/gpa'
+    | '/overview'
+    | '/progress'
+    | '/shelf'
+    | '/spotify-callback'
   id:
     | '__root__'
     | '/'
@@ -85,6 +108,7 @@ export interface FileRouteTypes {
     | '/overview'
     | '/progress'
     | '/shelf'
+    | '/spotify-callback'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -94,10 +118,18 @@ export interface RootRouteChildren {
   OverviewRoute: typeof OverviewRoute
   ProgressRoute: typeof ProgressRoute
   ShelfRoute: typeof ShelfRoute
+  SpotifyCallbackRoute: typeof SpotifyCallbackRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/spotify-callback': {
+      id: '/spotify-callback'
+      path: '/spotify-callback'
+      fullPath: '/spotify-callback'
+      preLoaderRoute: typeof SpotifyCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/shelf': {
       id: '/shelf'
       path: '/shelf'
@@ -150,6 +182,7 @@ const rootRouteChildren: RootRouteChildren = {
   OverviewRoute: OverviewRoute,
   ProgressRoute: ProgressRoute,
   ShelfRoute: ShelfRoute,
+  SpotifyCallbackRoute: SpotifyCallbackRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

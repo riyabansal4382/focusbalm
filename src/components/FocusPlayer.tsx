@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { useLocalState } from "@/lib/storage";
-import { Vinyl } from "@/components/Vinyl";
+import { Turntable } from "@/components/Turntable";
+import { beginSpotifyLogin, useSpotifyAccount } from "@/lib/spotifyAuth";
 
 export const SPOTIFY_KEY = "balm.spotify";
 
