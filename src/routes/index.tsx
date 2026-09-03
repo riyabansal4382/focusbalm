@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { LipBalm } from "@/components/LipBalm";
+import { FocusPlayer } from "@/components/FocusPlayer";
 
 import {
   FLAVORS,
@@ -294,6 +295,8 @@ function FocusPage() {
         </p>
         <TodayStrip sessions={sessions} />
       </section>
+
+      <FocusPlayer />
 
     </AppShell>
   );
