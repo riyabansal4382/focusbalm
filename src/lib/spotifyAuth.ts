@@ -149,9 +149,20 @@ export function useSpotifyAccount() {
 
   useEffect(() => {
     let cancelled = false;
-    getFreshToken().then((t) => !cancelled && setToken(t));
+    const sync = () => getFreshToken().then((t) => !cancelled && setToken(t));
+    sync();
+    const onMessage = (e: MessageEvent) => {
+      if (e.origin === window.location.origin && e.data?.type === "spotify-auth") sync();
+    };
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === TOKEN_KEY) sync();
+    };
+    window.addEventListener("message", onMessage);
+    window.addEventListener("storage", onStorage);
     return () => {
       cancelled = true;
+      window.removeEventListener("message", onMessage);
+      window.removeEventListener("storage", onStorage);
     };
   }, []);
 
