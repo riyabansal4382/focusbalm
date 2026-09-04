@@ -3,6 +3,9 @@ import { getSpotifyClientId } from "@/lib/spotify.functions";
 
 const TOKEN_KEY = "balm.spotify.token";
 const VERIFIER_KEY = "balm.spotify.verifier";
+const PREVIEW_CALLBACK =
+  "https://id-preview--fc635675-4e4c-49bb-800f-051ef3f49324.lovable.app/spotify-callback";
+const PUBLISHED_CALLBACK = "https://focusbalm.lovable.app/spotify-callback";
 
 export const SPOTIFY_SCOPES = [
   "user-read-private",
@@ -20,7 +23,13 @@ export type SpotifyToken = {
 };
 
 export function redirectUri() {
-  return `${window.location.origin}/spotify-callback`;
+  const { hostname, origin } = window.location;
+  if (hostname === "focusbalm.lovable.app") return PUBLISHED_CALLBACK;
+  if (hostname === "localhost" || hostname === "127.0.0.1") {
+    return "http://127.0.0.1:8080/spotify-callback";
+  }
+  if (hostname.endsWith(".lovable.app")) return `${origin}/spotify-callback`;
+  return PREVIEW_CALLBACK;
 }
 
 export function readToken(): SpotifyToken | null {
@@ -103,13 +112,14 @@ async function tokenRequest(body: Record<string, string>) {
   return token;
 }
 
-export async function completeSpotifyLogin(code: string) {
+export async function completeSpotifyLogin(code: string, callbackUri = redirectUri()) {
   const verifier = window.localStorage.getItem(VERIFIER_KEY) ?? "";
   window.localStorage.removeItem(VERIFIER_KEY);
+  if (!verifier) throw new Error("Spotify login session expired. Please try again.");
   return tokenRequest({
     grant_type: "authorization_code",
     code,
-    redirect_uri: redirectUri(),
+    redirect_uri: callbackUri,
     code_verifier: verifier,
   });
 }
@@ -152,7 +162,19 @@ export function useSpotifyAccount() {
     const sync = () => getFreshToken().then((t) => !cancelled && setToken(t));
     sync();
     const onMessage = (e: MessageEvent) => {
-      if (e.origin === window.location.origin && e.data?.type === "spotify-auth") sync();
+      const allowedOrigins = new Set([
+        window.location.origin,
+        new URL(PREVIEW_CALLBACK).origin,
+        new URL(PUBLISHED_CALLBACK).origin,
+        "http://127.0.0.1:8080",
+      ]);
+      if (!allowedOrigins.has(e.origin) || e.data?.type !== "spotify-auth") return;
+      const code = typeof e.data.code === "string" ? e.data.code : "";
+      const callbackUri = typeof e.data.redirectUri === "string" ? e.data.redirectUri : "";
+      if (!code || !callbackUri) return;
+      completeSpotifyLogin(code, callbackUri)
+        .then(sync)
+        .catch(() => setToken(null));
     };
     const onStorage = (e: StorageEvent) => {
       if (e.key === TOKEN_KEY) sync();

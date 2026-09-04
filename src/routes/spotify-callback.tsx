@@ -32,14 +32,21 @@ function SpotifyCallback() {
       setMessage("Missing authorization code.");
       return;
     }
+    if (window.opener) {
+      window.opener.postMessage(
+        {
+          type: "spotify-auth",
+          code,
+          redirectUri: `${window.location.origin}${window.location.pathname}`,
+        },
+        "*",
+      );
+      setMessage("Connected! You can close this window.");
+      window.close();
+      return;
+    }
     completeSpotifyLogin(code)
       .then(() => {
-        if (window.opener) {
-          window.opener.postMessage({ type: "spotify-auth" }, window.location.origin);
-          setMessage("Connected! You can close this window.");
-          window.close();
-          return;
-        }
         navigate({ to: "/" });
       })
       .catch(() => setMessage("Could not finish the Spotify login. Please try again."));
