@@ -55,19 +55,30 @@ async function challenge(verifier: string) {
 }
 
 export async function beginSpotifyLogin() {
-  const { clientId } = await getSpotifyClientId();
-  if (!clientId) throw new Error("Spotify isn't configured yet.");
-  const verifier = randomString(64);
-  window.sessionStorage.setItem(VERIFIER_KEY, verifier);
-  const params = new URLSearchParams({
-    client_id: clientId,
-    response_type: "code",
-    redirect_uri: redirectUri(),
-    code_challenge_method: "S256",
-    code_challenge: await challenge(verifier),
-    scope: SPOTIFY_SCOPES,
-  });
-  window.location.href = `https://accounts.spotify.com/authorize?${params}`;
+  // Open the popup during the click gesture: inside the editor preview iframe a
+  // top-level redirect to accounts.spotify.com is blocked, and popup blockers
+  // reject windows opened after an await.
+  const popup = window.open("about:blank", "spotify-login", "width=480,height=720");
+  try {
+    const { clientId } = await getSpotifyClientId();
+    if (!clientId) throw new Error("Spotify isn't configured yet.");
+    const verifier = randomString(64);
+    window.localStorage.setItem(VERIFIER_KEY, verifier);
+    const params = new URLSearchParams({
+      client_id: clientId,
+      response_type: "code",
+      redirect_uri: redirectUri(),
+      code_challenge_method: "S256",
+      code_challenge: await challenge(verifier),
+      scope: SPOTIFY_SCOPES,
+    });
+    const url = `https://accounts.spotify.com/authorize?${params}`;
+    if (popup && !popup.closed) popup.location.href = url;
+    else window.open(url, "_blank", "noopener");
+  } catch (e) {
+    popup?.close();
+    throw e;
+  }
 }
 
 async function tokenRequest(body: Record<string, string>) {
@@ -93,8 +104,8 @@ async function tokenRequest(body: Record<string, string>) {
 }
 
 export async function completeSpotifyLogin(code: string) {
-  const verifier = window.sessionStorage.getItem(VERIFIER_KEY) ?? "";
-  window.sessionStorage.removeItem(VERIFIER_KEY);
+  const verifier = window.localStorage.getItem(VERIFIER_KEY) ?? "";
+  window.localStorage.removeItem(VERIFIER_KEY);
   return tokenRequest({
     grant_type: "authorization_code",
     code,
@@ -138,9 +149,20 @@ export function useSpotifyAccount() {
 
   useEffect(() => {
     let cancelled = false;
-    getFreshToken().then((t) => !cancelled && setToken(t));
+    const sync = () => getFreshToken().then((t) => !cancelled && setToken(t));
+    sync();
+    const onMessage = (e: MessageEvent) => {
+      if (e.origin === window.location.origin && e.data?.type === "spotify-auth") sync();
+    };
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === TOKEN_KEY) sync();
+    };
+    window.addEventListener("message", onMessage);
+    window.addEventListener("storage", onStorage);
     return () => {
       cancelled = true;
+      window.removeEventListener("message", onMessage);
+      window.removeEventListener("storage", onStorage);
     };
   }, []);
 

@@ -33,7 +33,15 @@ function SpotifyCallback() {
       return;
     }
     completeSpotifyLogin(code)
-      .then(() => navigate({ to: "/" }))
+      .then(() => {
+        if (window.opener) {
+          window.opener.postMessage({ type: "spotify-auth" }, window.location.origin);
+          setMessage("Connected! You can close this window.");
+          window.close();
+          return;
+        }
+        navigate({ to: "/" });
+      })
       .catch(() => setMessage("Could not finish the Spotify login. Please try again."));
   }, [navigate]);
 
