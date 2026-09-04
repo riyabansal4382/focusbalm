@@ -35,8 +35,8 @@ export function LipBalm({ fill, color = "var(--balm-pink)", size = 220, animated
       >
         <defs>
           <linearGradient id={capId} x1="0" x2="0" y1="0" y2="1">
-            <stop offset="0" stopColor="var(--balm-pink-deep)" />
-            <stop offset="1" stopColor="var(--primary)" />
+            <stop offset="0" stopColor="oklch(0.42 0.13 42)" />
+            <stop offset="1" stopColor="oklch(0.3 0.09 38)" />
           </linearGradient>
           <linearGradient id={balmId} x1="0" x2="0" y1="0" y2="1">
             <stop offset="0" stopColor={color} stopOpacity="0.95" />
